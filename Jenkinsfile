@@ -7,7 +7,11 @@ pipeline {
         checkout scm
       }
     }
-
+    stage('Check Python') {
+    steps {
+        sh 'python --version'
+    }
+}
     stage('Install Dependencies') {
       steps {
         sh 'python -m pip install --upgrade pip'
