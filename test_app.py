@@ -12,7 +12,7 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 import app as app_module
-from app import app, init_db, DB_NAME
+from app import app
 
 
 # ============================================================
@@ -54,7 +54,7 @@ class TestHealthCheck:
         assert r.status_code == 200
 
     def test_health_returns_correct_fields(self, client):
-        data = r = client.get("/")
+        r = client.get("/")
         body = json.loads(r.data)
         assert body["status"] == "running"
         assert body["app"] == "ACEest Fitness and Gym API"
