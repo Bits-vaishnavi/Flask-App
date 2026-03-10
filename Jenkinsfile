@@ -1,10 +1,10 @@
 pipeline {
     agent any
     environment {
+        
         PYTHON_EXE = 'C:\\Users\\Vaishnavi\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
     }
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -19,20 +19,23 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'python -m pip install --upgrade pip'
-                bat 'pip install -r requirements.txt'
+                
+                bat "${PYTHON_EXE} -m pip install --upgrade pip"
+                bat "${PYTHON_EXE} -m pip install -r requirements.txt"
             }
         }
 
         stage('Lint & Syntax Check') {
             steps {
-                bat 'python -m py_compile app.py'
+                
+                bat "${PYTHON_EXE} -m py_compile app.py"
             }
         }
 
         stage('Unit Tests') {
             steps {
-                bat 'pytest'
+                
+                bat "${PYTHON_EXE} -m pytest"
             }
         }
     }
