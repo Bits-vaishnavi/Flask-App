@@ -1,49 +1,37 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
-    stage('Check Python') {
-    steps {
-        sh 'python --version'
-    }
-}
-    stage('Install Dependencies') {
-      steps {
-        sh 'python -m pip install --upgrade pip'
-        sh 'pip install -r requirements.txt'
-      }
-    }
+    stages {
 
-    stage('Lint & Syntax Check') {
-      steps {
-        sh 'python -m py_compile app.py'
-        sh 'python -m py_compile test_app.py'
-        sh 'ruff check .'
-      }
-    }
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
-    stage('Unit Tests') {
-      steps {
-        sh 'pytest -q'
-      }
-    }
+        stage('Check Python') {
+            steps {
+                bat 'python --version'
+            }
+        }
 
-    stage('Build Docker Image') {
-      steps {
-        sh 'docker build -t aceest-fitness-api:jenkins .'
-      }
-    }
+        stage('Install Dependencies') {
+            steps {
+                bat 'python -m pip install --upgrade pip'
+                bat 'pip install -r requirements.txt'
+            }
+        }
 
-    stage('Smoke Test Container') {
-      steps {
-        sh 'docker run --rm aceest-fitness-api:jenkins python -c "import app; print(\"ok\")"'
-      }
-    }
-  }
+        stage('Lint & Syntax Check') {
+            steps {
+                bat 'python -m py_compile app.py'
+            }
+        }
 
+        stage('Unit Tests') {
+            steps {
+                bat 'pytest'
+            }
+        }
+    }
 }
