@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    environment {
+        PYTHON_EXE = 'C:\\Users\\Vaishnavi\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
+    }
     stages {
 
         stage('Checkout') {
@@ -11,7 +13,7 @@ pipeline {
 
         stage('Check Python') {
             steps {
-                bat 'python --version'
+               bat "${PYTHON_EXE} --version"
             }
         }
 
