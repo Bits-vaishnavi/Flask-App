@@ -75,6 +75,11 @@ pipeline {
                 }
             }
         }
+        stage('Debug K8s Connection') {
+            steps {
+                bat "curl -k https://127.0.0.1:54933/api" 
+            }
+        }
         stage('Deploy to Minikube') {
             steps {
                 script {
