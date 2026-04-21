@@ -58,14 +58,12 @@ pipeline {
         stage('Build & Push Docker') {
             steps {
                 script {
-                    // Use your Docker Hub username here
                     def dockerUser = "2024tm93562" 
                     def imageName = "${dockerUser}/aceest-fitness:${BUILD_NUMBER}"
                     
                     // Build the image
                     bat "docker build -t ${imageName} ."
                     
-                    // Log in and push using the credentials we created in Step 1
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', 
                                      passwordVariable: 'DOCKER_HUB_PASSWORD', 
                                      usernameVariable: 'DOCKER_HUB_USERNAME')]) {
@@ -74,6 +72,17 @@ pipeline {
                         bat "docker tag ${imageName} ${dockerUser}/aceest-fitness:latest"
                         bat "docker push ${dockerUser}/aceest-fitness:latest"
                     }
+                }
+            }
+        }
+        stage('Deploy to Minikube') {
+            steps {
+                script {
+                    bat "kubectl apply -f deployment.yaml"
+                    
+                    bat "kubectl rollout restart deployment/aceest-fitness"
+                    
+                    bat "kubectl rollout status deployment/aceest-fitness"
                 }
             }
         }
