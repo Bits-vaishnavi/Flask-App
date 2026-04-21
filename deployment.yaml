@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: fitness-web
   strategy:
-    type: RollingUpdate  # This satisfies the "Rolling Update" requirement
+    type: RollingUpdate  
   template:
     metadata:
       labels:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: fitness-app
-        image: your_docker_username/aceest-fitness:latest # Replace with your Hub username
+        image: 2024tm93562/aceest-fitness:latest 
         imagePullPolicy: Always
         ports:
         - containerPort: 5000

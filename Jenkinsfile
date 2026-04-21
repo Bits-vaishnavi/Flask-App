@@ -75,19 +75,17 @@ pipeline {
                 }
             }
         }
-        stage('Debug K8s Connection') {
-            steps {
-                bat "curl -k https://127.0.0.1:54933/api" 
-            }
-        }
+        
         stage('Deploy to Minikube') {
             steps {
                 script {
-                    bat "kubectl apply -f deployment.yaml --validate=false"
+                    def kConfig = "C:\\Users\\Vaishnavi\\.kube\\config"
                     
-                    bat "kubectl rollout restart deployment/aceest-fitness"
+                    bat "kubectl --kubeconfig=${kConfig} apply -f deployment.yaml --validate=false"
                     
-                    bat "kubectl rollout status deployment/aceest-fitness"
+                    bat "kubectl --kubeconfig=${kConfig} rollout restart deployment/aceest-fitness"
+                    
+                    bat "kubectl --kubeconfig=${kConfig} rollout status deployment/aceest-fitness"
                 }
             }
         }
