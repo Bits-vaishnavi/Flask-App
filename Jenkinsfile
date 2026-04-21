@@ -78,7 +78,7 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 script {
-                    bat "kubectl apply -f deployment.yaml"
+                    bat "kubectl apply -f deployment.yaml --validate=false"
                     
                     bat "kubectl rollout restart deployment/aceest-fitness"
                     
