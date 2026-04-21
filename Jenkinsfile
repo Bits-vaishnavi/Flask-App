@@ -55,5 +55,27 @@ pipeline {
                 bat "${PYTHON_EXE} -m pytest"
             }
         }
+        stage('Build & Push Docker') {
+            steps {
+                script {
+                    // Use your Docker Hub username here
+                    def dockerUser = "2024tm93562" 
+                    def imageName = "${dockerUser}/aceest-fitness:${BUILD_NUMBER}"
+                    
+                    // Build the image
+                    bat "docker build -t ${imageName} ."
+                    
+                    // Log in and push using the credentials we created in Step 1
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', 
+                                     passwordVariable: 'DOCKER_HUB_PASSWORD', 
+                                     usernameVariable: 'DOCKER_HUB_USERNAME')]) {
+                        bat "echo %DOCKER_HUB_PASSWORD% | docker login -u %DOCKER_HUB_USERNAME% --password-stdin"
+                        bat "docker push ${imageName}"
+                        bat "docker tag ${imageName} ${dockerUser}/aceest-fitness:latest"
+                        bat "docker push ${dockerUser}/aceest-fitness:latest"
+                    }
+                }
+            }
+        }
     }
 }
