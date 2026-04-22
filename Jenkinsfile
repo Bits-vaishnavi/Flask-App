@@ -24,6 +24,12 @@ pipeline {
             }
         }
 
+        stage('Unit Tests') {
+            steps {
+                bat "${PYTHON_EXE} -m pytest --cov=. --cov-report=xml"
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONAR_SERVER}") {
@@ -36,6 +42,7 @@ pipeline {
                             "-Dsonar.sources=. " +
                             "-Dsonar.language=py " +
                             "-Dsonar.python.version=3 " +
+                            "-Dsonar.python.coverage.reportPaths=coverage.xml " +
                             "-Dsonar.python.interpreter=${PYTHON_EXE}"
                     }
                 }
@@ -50,11 +57,7 @@ pipeline {
             }
         }
 
-        stage('Unit Tests') {
-            steps {
-                bat "${PYTHON_EXE} -m pytest"
-            }
-        }
+
         stage('Build & Push Docker') {
             steps {
                 script {
