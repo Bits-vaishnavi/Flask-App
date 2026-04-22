@@ -3,12 +3,14 @@ kind: Deployment
 metadata:
   name: aceest-fitness
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: fitness-web
   strategy:
-    type: RollingUpdate  
+    type: RollingUpdate
+    maxSurge: 1
+    maxUnavailable: 1 
   template:
     metadata:
       labels:
