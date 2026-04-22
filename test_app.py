@@ -57,7 +57,7 @@ class TestHealthCheck:
         r = client.get("/")
         body = json.loads(r.data)
         assert body["status"] == "running"
-        assert body["app"] == "ACEest Fitness and Gym API"
+        assert body["app"] == "ACEest Fitness and Gym API v2"
         assert "version" in body
 
 
