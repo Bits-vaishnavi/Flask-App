@@ -112,7 +112,9 @@ pipeline {
                     kubectl --kubeconfig=\$kConfig rollout status deployment/aceest-fitness-\$targetColor -n blue-green-deployment
                     
                     Write-Host "Switching traffic to \$targetColor..."
-                    kubectl --kubeconfig=\$kConfig patch service fitness-service -p "{\\"spec\\":{\\"selector\\":{\\"version\\":\\"\$targetColor\\"}}}" -n blue-green-deployment
+                    \$patchString = '{"spec":{"selector":{"version":"' + \$targetColor + '"}}}'
+                    \$patchString | Out-File -FilePath "patch.json" -Encoding ASCII
+                    kubectl --kubeconfig=\$kConfig patch service fitness-service --patch-file patch.json -n blue-green-deployment
                     Write-Host "Blue-Green Deployment successful!"
                     """
                     
