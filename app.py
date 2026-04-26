@@ -102,7 +102,7 @@ def health_check():
       200:
         description: API is running
     """
-    return jsonify({"app": "ACEest Fitness and Gym API V2", "status": "running", "version": "1.2.0"}), 200
+    return jsonify({"app": "ACEest Fitness and Gym API V2", "status": "running", "version": "1.3.0"}), 200
 
 
 # ============================================================
