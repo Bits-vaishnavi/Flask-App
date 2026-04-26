@@ -79,16 +79,44 @@ pipeline {
             }
         }
         
-        stage('Deploy to Minikube') {
+        stage('Deploy to Minikube (Blue-Green)') {
             steps {
                 script {
                     def kConfig = "C:\\Users\\Vaishnavi\\.kube\\config"
+                    def dockerUser = "2024tm93562" 
+                    def imageName = "${dockerUser}/aceest-fitness:${BUILD_NUMBER}"
                     
-                    bat "kubectl --kubeconfig=${kConfig} apply -f deployment.yaml --validate=false"
+                    // Create namespace
+                    bat "kubectl --kubeconfig=${kConfig} create namespace blue-green-deployment --dry-run=client -o yaml | kubectl apply -f -"
                     
-                    bat "kubectl --kubeconfig=${kConfig} rollout restart deployment/aceest-fitness"
+                    // Make sure both deployments and service exist
+                    bat "kubectl --kubeconfig=${kConfig} apply -f deployment-blue.yaml -n blue-green-deployment"
+                    bat "kubectl --kubeconfig=${kConfig} apply -f deployment-green.yaml -n blue-green-deployment"
+                    bat "kubectl --kubeconfig=${kConfig} apply -f service.yaml -n blue-green-deployment"
                     
-                    bat "kubectl --kubeconfig=${kConfig} rollout status deployment/aceest-fitness"
+                    // Use powershell to toggle the active color and switch traffic
+                    def script = """
+                    \$kConfig = "${kConfig}"
+                    \$imageName = "${imageName}"
+                    \$activeColor = (kubectl --kubeconfig=\$kConfig get svc fitness-service -n blue-green-deployment -o jsonpath='{.spec.selector.version}')
+                    
+                    if (\$activeColor -eq "green") {
+                        \$targetColor = "blue"
+                    } else {
+                        \$targetColor = "green"
+                    }
+                    
+                    Write-Host "Active color is \$activeColor. Deploying new image to \$targetColor..."
+                    
+                    kubectl --kubeconfig=\$kConfig set image deployment/aceest-fitness-\$targetColor fitness-app=\$imageName -n blue-green-deployment
+                    kubectl --kubeconfig=\$kConfig rollout status deployment/aceest-fitness-\$targetColor -n blue-green-deployment
+                    
+                    Write-Host "Switching traffic to \$targetColor..."
+                    kubectl --kubeconfig=\$kConfig patch service fitness-service -p "{\\"spec\\":{\\"selector\\":{\\"version\\":\\"\$targetColor\\"}}}" -n blue-green-deployment
+                    Write-Host "Blue-Green Deployment successful!"
+                    """
+                    
+                    powershell script: script
                 }
             }
         }

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness-green
+  namespace: blue-green-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: fitness-web
+      version: green
+  template:
+    metadata:
+      labels:
+        app: fitness-web
+        version: green
+    spec:
+      containers:
+      - name: fitness-app
+        image: 2024tm93562/aceest-fitness:latest 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
