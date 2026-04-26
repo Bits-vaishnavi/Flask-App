@@ -87,7 +87,7 @@ pipeline {
                     def imageName = "${dockerUser}/aceest-fitness:${BUILD_NUMBER}"
                     
                     // Create namespace
-                    bat "kubectl --kubeconfig=${kConfig} create namespace blue-green-deployment --dry-run=client -o yaml | kubectl apply -f -"
+                    bat "kubectl --kubeconfig=${kConfig} get namespace blue-green-deployment || kubectl --kubeconfig=${kConfig} create namespace blue-green-deployment"
                     
                     // Make sure both deployments and service exist
                     bat "kubectl --kubeconfig=${kConfig} apply -f deployment-blue.yaml -n blue-green-deployment"
