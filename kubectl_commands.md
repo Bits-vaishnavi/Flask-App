@@ -54,3 +54,11 @@ Check which environment (blue or green) the service is currently routing traffic
 
 Update (patch) a service's selector instantly to switch traffic (using a patch file to avoid PowerShell quoting issues):
 `kubectl patch service fitness-service --patch-file patch.json -n blue-green-deployment`
+
+
+ `kubectl port-forward service/fitness-service 30002:5000 -n blue-green-deployment`
+
+
+  `kubectl get svc fitness-service -n blue-green-deployment -o jsonpath="{.spec.selector.version}"`
+
+  `while($true) { curl.exe -s http://localhost:30002 ; Start-Sleep -Seconds 3 }`
