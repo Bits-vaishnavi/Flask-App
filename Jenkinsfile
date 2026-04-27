@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    triggers {
+        pollSCM('0 12 * * *') // Poll GitHub every day at 12:00 PM for changes
+    }
     environment {
         PYTHON_EXE = 'C:\\Users\\Vaishnavi\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
         SONAR_SERVER = 'SonarQube-Server' 
